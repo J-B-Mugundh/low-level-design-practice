@@ -54,7 +54,7 @@ public class UberService {
         Thread emailThread = new Thread(new EmailThreadRunnable());
         // Note: Can't use Thread class coz it excepts a Runnable target as parameter.
         // Using Callable there is not possible. Hence, we use FutureTask which supports Callable parameter
-        FutureTask etaThreadRunnable = new FutureTask<>(new ETACalculatorCallable("Bangalore"));
+        FutureTask<String> etaThreadRunnable = new FutureTask<>(new ETACalculatorCallable("Bangalore"));
         Thread etaThread = new Thread(etaThreadRunnable);
         System.out.println("Task started!");
         smsThread.start();
@@ -66,7 +66,7 @@ public class UberService {
         try{
             smsThread.join();
             emailThread.join();
-            String eta = (String) etaThreadRunnable.get();
+            String eta = etaThreadRunnable.get();
             System.out.println(eta);
             System.out.println("Tasks done!");
         } catch (InterruptedException | ExecutionException e) {
