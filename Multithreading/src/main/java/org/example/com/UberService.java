@@ -169,7 +169,7 @@ class EmailService {
     private static final ExecutorService executor = Executors.newFixedThreadPool(10);
 
     public static void sendEmail(String recipient) {
-
+        // execute -> fire & forget
         executor.execute(() -> {
             System.out.println("Sending email to " + recipient + " on " + Thread.currentThread().getName());
             try{
@@ -195,6 +195,7 @@ class FutureExecutorExample{
     private static final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        // submit -> will get a return value
         Future<Integer> future1 = executor.submit(() -> {
             System.out.println("Using future executor 1 with " + Thread.currentThread().getName());
             Thread.sleep(1000);
@@ -215,7 +216,7 @@ class FutureExecutorExample{
 
         System.out.println("Doing some other work in " + Thread.currentThread().getName());
 
-        System.out.println("Result of future executor 1: " + future1.get());
+        System.out.println("Result of future executor 1: " + future1.get()); // this is blocking. waits till result is ready
         System.out.println("Result of future executor 2: " + future2.get());
         System.out.println("Result of future executor 3: " + future3.get());
 
