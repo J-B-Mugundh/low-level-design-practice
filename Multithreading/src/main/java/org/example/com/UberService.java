@@ -9,10 +9,9 @@ UberService class is responsible for
 
 // Using Thread & Runnable - Fire & Forget principle
 // Using Callable - Wait for results - can return & throw exceptions
+// Use Executor framework as replacement for manually creating and managing threads
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 public class UberService {
     public static void main(String[] args) throws InterruptedException{
@@ -149,6 +148,7 @@ class ETAThread extends Thread{
     }
 }
 
+// Callable Example
 class ETACalculatorCallable implements Callable<String> {
 
     public final String location;
@@ -161,5 +161,64 @@ class ETACalculatorCallable implements Callable<String> {
         Thread.sleep(2000);
         System.out.println("ETA Calculation using Callable");
         return "ETA for " + location + ": 20 minutes";
+    }
+}
+
+// Executor Example
+class EmailService {
+    private static final ExecutorService executor = Executors.newFixedThreadPool(10);
+
+    public static void sendEmail(String recipient) {
+
+        executor.execute(() -> {
+            System.out.println("Sending email to " + recipient + " on " + Thread.currentThread().getName());
+            try{
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            System.out.println("Email sent to " + recipient);
+        });
+
+    }
+
+    public static void main(String[] args) {
+        for(int i = 0; i < 24; i++){
+            sendEmail("user" + i + "@gmal.com");
+        }
+        executor.shutdown();
+    }
+}
+
+// Future Executor Example
+class FutureExecutorExample{
+    private static final ExecutorService executor = Executors.newFixedThreadPool(2);
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        Future<Integer> future1 = executor.submit(() -> {
+            System.out.println("Using future executor 1 with " + Thread.currentThread().getName());
+            Thread.sleep(1000);
+            return 1000;
+        });
+
+        Future<Integer> future2 = executor.submit(() -> {
+            System.out.println("Using future executor 2 with " + Thread.currentThread().getName());
+            Thread.sleep(1000);
+            return 1000;
+        });
+
+        Future<Integer> future3 = executor.submit(() -> {
+            System.out.println("Using future executor 3 with " + Thread.currentThread().getName());
+            Thread.sleep(1000);
+            return 1000;
+        });
+
+        System.out.println("Doing some other work in " + Thread.currentThread().getName());
+
+        System.out.println("Result of future executor 1: " + future1.get());
+        System.out.println("Result of future executor 2: " + future2.get());
+        System.out.println("Result of future executor 3: " + future3.get());
+
+        executor.shutdown();
     }
 }
