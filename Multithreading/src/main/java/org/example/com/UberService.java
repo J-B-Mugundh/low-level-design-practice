@@ -223,3 +223,40 @@ class FutureExecutorExample{
         executor.shutdown();
     }
 }
+
+class CachedThreadExecutorExample{
+    private static final ExecutorService cacheExecutor = Executors.newCachedThreadPool();
+
+    public static void sendEmail(String recipient) {
+        // execute -> fire & forget
+        cacheExecutor.execute(() -> {
+            System.out.println("Sending email to " + recipient + " on " + Thread.currentThread().getName());
+            try{
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            System.out.println("Email sent to " + recipient);
+        });
+
+    }
+
+    public static void main(String[] args) {
+        for(int i = 0; i < 24; i++){
+            sendEmail("user" + i + "@gmal.com");
+        }
+        cacheExecutor.shutdown();
+    }
+}
+
+class ScheduledThreadExecutorExample{
+    private static final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(3);
+
+    public static void main(String[] args) {
+        Runnable task = () -> System.out.println("Cleaning expired sessions.. ");
+        scheduledExecutor.scheduleAtFixedRate(task, 0, 5, TimeUnit.SECONDS);
+    }
+
+
+
+}
