@@ -4,7 +4,7 @@ package org.example.com;
     Singleton Pattern - Used across places like DB conn creation/accessing, Logging, etc - when used with threads
  */
 public class SingletonPattern {
-
+    // Can verify these instances by their hash, across different scenarios of threading, concurrency - to understand the issues & performance overheads etc
     public static void main(String[] args) {
         // i) EagerSingletonPattern - thread-safe, but inefficient
         EagerSingletonPattern eagerSingletonPattern = EagerSingletonPattern.getInstance();
